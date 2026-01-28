@@ -3,6 +3,8 @@ services:
     image: postgres:16-alpine
     env_file: .env
     restart: always
+    ports:
+      - 5433:5432
     volumes:
       - ./pgdata:/var/lib/postgresql/data
   linkwarden:
@@ -13,7 +15,7 @@ services:
     # build: . # uncomment to build from source
     image: ghcr.io/linkwarden/linkwarden:latest # comment to build from source
     ports:
-      - 3000:3000
+      - 3001:3000
     volumes:
       - ./data:/data/data
     depends_on:
@@ -22,6 +24,8 @@ services:
   meilisearch:
     image: getmeili/meilisearch:v1.12.8
     restart: always
+    ports:
+      - 7701:7700
     env_file:
       - .env
     volumes:
