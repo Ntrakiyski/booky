@@ -1,0 +1,61 @@
+# Coolify-ready docker-compose
+# This file is designed for Coolify deployment
+# Port exposure is handled by Coolify's reverse proxy (Traefik)
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.12.8
+    restart: always
+    environment:
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
+    volumes:
+      - meili_data:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  linkwarden:
+    image: ghcr.io/linkwarden/linkwarden:latest
+    # Or build from source:
+    # build: .
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - MEILI_HOST=http://meilisearch:7700
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
+      - NEXT_PUBLIC_CREDENTIALS_ENABLED=${NEXT_PUBLIC_CREDENTIALS_ENABLED:-true}
+    # Coolify handles port mapping via Traefik - expose internal port
+    expose:
+      - "3000"
+    volumes:
+      - app_data:/data/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      meilisearch:
+        condition: service_healthy
+    labels:
+      # Coolify will auto-configure these, but you can customize:
+      - "traefik.enable=true"
+
+volumes:
+  postgres_data:
+  meili_data:
+  app_data:

@@ -1,0 +1,49 @@
+# Local development docker-compose with configurable ports
+# Usage: docker compose -f docker-compose.local.yml up -d
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: booky-postgres
+    env_file: .env
+    restart: always
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.12.8
+    container_name: booky-meilisearch
+    restart: always
+    env_file: .env
+    volumes:
+      - ./meili_data:/meili_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7700/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  linkwarden:
+    container_name: booky-app
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+    restart: always
+    image: ghcr.io/linkwarden/linkwarden:latest
+    # Uncomment below to build from source instead:
+    # build: .
+    ports:
+      # Change 3000 to any free port on your machine (e.g., 3001:3000)
+      - "${BOOKY_PORT:-3000}:3000"
+    volumes:
+      - ./data:/data/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      meilisearch:
+        condition: service_healthy
