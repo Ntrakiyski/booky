@@ -4,3 +4,5 @@ export * from "./meilisearchClient";
 export * from "./isArchivalTag";
 export * from "./generatePreview";
 export * from "./utils";
+export * from "./aiModel";
+export * from "./aiSearchPrompt";

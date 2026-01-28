@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Announcement from "@/components/Announcement";
 import Sidebar from "@/components/Sidebar";
+import FloatingSearchBar from "@/components/FloatingSearchBar";
 import { ReactNode, useEffect, useState } from "react";
 import getLatestVersion from "@/lib/client/getLatestVersion";
 import { DndContext } from "@dnd-kit/core";
@@ -71,6 +72,7 @@ export default function MainLayout({ children }: Props) {
           <Navbar />
           {children}
         </div>
+        <FloatingSearchBar />
       </div>
     </DragNDrop>
   );

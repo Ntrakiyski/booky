@@ -4,6 +4,13 @@
   "private": true,
   "main": "index.ts",
   "dependencies": {
+    "@ai-sdk/openai-compatible": "1.0.29",
+    "@ai-sdk/anthropic": "2.0.56",
+    "@ai-sdk/azure": "2.0.88",
+    "@ai-sdk/perplexity": "2.0.22",
+    "@openrouter/ai-sdk-provider": "1.5.4",
+    "ai": "^5.0.113",
+    "ollama-ai-provider-v2": "^1.5.5",
     "@linkwarden/filesystem": "*",
     "@linkwarden/prisma": "*",
     "@linkwarden/types": "*",
