@@ -26,10 +26,11 @@ services:
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - MEILI_URL=http://meilisearch:7700
       - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
+      - PORT=3100
     restart: always
     image: ghcr.io/linkwarden/linkwarden:latest
     ports:
-      - 1895:3000
+      - 1895:3100
     volumes:
       - ./data:/data/data
     depends_on:
